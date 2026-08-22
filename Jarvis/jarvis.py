@@ -8,6 +8,7 @@ import random
 import pyautogui
 import pyjokes
 from pathlib import Path
+from urllib.parse import quote_plus
 
 
 engine = pyttsx3.init()
@@ -16,6 +17,11 @@ engine.setProperty('voice', voices[1].id)
 engine.setProperty('rate', 150)
 engine.setProperty('volume', 1)
 
+def google_search(query):
+    search_url = f"https://www.google.com/search?q={quote_plus(query)}"
+
+    speak(f"Searching Google for {query}")
+    wb.open(search_url)
 
 def speak(audio) -> None:
     engine.say(audio)
@@ -190,6 +196,14 @@ if __name__ == "__main__":
             joke = pyjokes.get_joke()
             speak(joke)
             print(joke)
+
+        elif query.startswith("search for"):
+            search_query = query.replace("search for", "", 1).strip()
+            google_search(search_query)
+
+        elif query.startswith("google"):
+            search_query = query.replace("google", "", 1).strip()
+            google_search(search_query)
 
         elif "shutdown" in query:
             speak("Shutting down the system, goodbye!")

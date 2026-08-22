@@ -7,6 +7,8 @@ import os
 import random
 import pyautogui
 import pyjokes
+from pathlib import Path
+
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
@@ -62,7 +64,8 @@ def wishme() -> None:
 def screenshot() -> None:
     """Takes a screenshot and saves it."""
     img = pyautogui.screenshot()
-    img_path = os.path.expanduser("~\\Pictures\\screenshot.png")
+
+    img_path = Path.home() / "Pictures" / "screenshot.png"
     img.save(img_path)
     speak(f"Screenshot saved as {img_path}.")
     print(f"Screenshot saved as {img_path}.")
@@ -98,7 +101,7 @@ def takecommand() -> str:
 
 def play_music(song_name=None) -> None:
     """Plays music from the user's Music directory."""
-    song_dir = os.path.expanduser("~\\Music")
+    song_dir = Path.home() / "Music"
     songs = os.listdir(song_dir)
 
     if song_name:
@@ -169,10 +172,12 @@ if __name__ == "__main__":
             play_music(song_name)
 
         elif "open youtube" in query:
-            wb.open("youtube.com")
+            speak("opening youtube")
+            wb.open("https://youtube.com")
             
         elif "open google" in query:
-            wb.open("google.com")
+            speak("opening google")
+            wb.open("https://google.com")
 
         elif "change your name" in query:
             set_name()

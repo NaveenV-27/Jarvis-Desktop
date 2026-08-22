@@ -141,6 +141,20 @@ def load_name() -> str:
     except FileNotFoundError:
         return "Jarvis"  # Default name
 
+def open_application(app):
+    apps = {
+        "notepad": "notepad.exe",
+        "calculator": "calc.exe",
+        "paint": "mspaint.exe",
+        "explorer": "explorer.exe",
+    }
+
+    if app in apps:
+        speak(f"Opening {app}")
+        os.system(f"start {apps[app]}")
+    else:
+        speak("I don't know where that application is.")
+
 
 def search_wikipedia(query):
     """Searches Wikipedia and returns a summary."""
@@ -218,3 +232,9 @@ if __name__ == "__main__":
         elif "offline" in query or "exit" in query:
             speak("Going offline. Have a good day!")
             break
+
+        elif query.startswith("open"):
+            app = query.replace("open", "", 1).strip()
+
+            if app in ["notepad", "calculator", "paint", "explorer"]:
+                open_application(app)

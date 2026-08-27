@@ -137,6 +137,15 @@ def play_music(song_name=None) -> None:
         speak("No song found.")
         print("No song found.")
 
+def volume_up():
+    pyautogui.press("volumeup", presses=5)
+
+def volume_down():
+    pyautogui.press("volumedown", presses=5)
+
+def mute():
+    pyautogui.press("volumemute")
+
 def set_name() -> None:
     """Sets a new name for the assistant."""
     speak("What would you like to name me?")
@@ -205,6 +214,15 @@ if __name__ == "__main__":
         elif "play music" in query:
             song_name = query.replace("play music", "").strip()
             play_music(song_name)
+
+        elif "volume up" in query:
+            volume_up()
+
+        elif "volume down" in query:
+            volume_down()
+
+        elif "mute" in query:
+            mute()
 
         elif "open youtube" in query:
             speak("opening youtube")

@@ -1,19 +1,24 @@
 import speech_recognition as sr
 
 from core.speech import speak
+from core.utils import normalize_command
 
 
 def take_command() -> str | None:
-    """Listens to microphone input and converts it to text."""
+    """Listen to microphone input and convert it to text."""
 
     recognizer = sr.Recognizer()
 
     with sr.Microphone() as source:
         print("Listening...")
+
         recognizer.pause_threshold = 1
 
         try:
-            audio = recognizer.listen(source, timeout=5)
+            audio = recognizer.listen(
+                source,
+                timeout=5
+            )
 
         except sr.WaitTimeoutError:
             speak("Timeout occurred. Please try again.")
@@ -27,9 +32,11 @@ def take_command() -> str | None:
             language="en-in"
         )
 
-        print(f"You said: {query}")
+        query = normalize_command(query)
 
-        return query.lower()
+        print(f"You: {query}")
+
+        return query
 
     except sr.UnknownValueError:
         speak("Sorry, I did not understand that.")
@@ -40,6 +47,6 @@ def take_command() -> str | None:
         return None
 
     except Exception as error:
-        print(f"Error: {error}")
+        print(f"Speech recognition error: {error}")
         speak("An unexpected error occurred.")
         return None

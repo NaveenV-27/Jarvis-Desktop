@@ -26,6 +26,12 @@ from features.system_info import (
     system_status,
 )
 
+from features.files import (
+    create_folder,
+    find_file,
+    open_folder,
+)
+
 
 def process_command(query: str) -> bool:
     """
@@ -199,27 +205,23 @@ def process_command(query: str) -> bool:
         tell_joke()
         return False
 
-    # -------------------------
-    # SYSTEM STATUS
+        # -------------------------
+    # SYSTEM INFORMATION
     # -------------------------
 
     if any(
         phrase in query
         for phrase in [
             "system status",
-            "system information",
-            "how is my computer",
-            "how is my system",
+            "system usage",
             "cpu usage",
             "ram usage",
+            "memory usage",
+            "how is my computer",
         ]
     ):
         system_status()
         return False
-
-    # -------------------------
-    # COMPUTER INFO
-    # -------------------------
 
     if any(
         phrase in query
@@ -270,6 +272,120 @@ def process_command(query: str) -> bool:
         speak("Going offline. Have a good day!")
 
         return True
+
+        # -------------------------
+    # OPEN FOLDERS
+    # -------------------------
+
+    if query.startswith("open "):
+
+        target = query.replace(
+            "open ",
+            "",
+            1
+        ).strip()
+
+        if target in [
+            "downloads",
+            "download",
+            "documents",
+            "document",
+            "pictures",
+            "picture",
+            "music",
+            "desktop",
+        ]:
+
+            if open_folder(target):
+                return False
+
+    # -------------------------
+    # CREATE FOLDER
+    # -------------------------
+
+    if (
+        query.startswith("create a folder")
+        or query.startswith("create folder")
+        or query.startswith("make a folder")
+    ):
+
+        folder_name = query
+
+        for phrase in [
+            "create a folder called",
+            "create a folder named",
+            "create a folder",
+            "create folder called",
+            "create folder named",
+            "create folder",
+            "make a folder called",
+            "make a folder named",
+            "make a folder",
+        ]:
+            folder_name = folder_name.replace(
+                phrase,
+                "",
+                1
+            )
+
+        folder_name = folder_name.strip()
+
+        if not folder_name:
+            speak("What should I call the folder?")
+            return False
+
+        create_folder(folder_name)
+
+        return False
+
+    # -------------------------
+    # FIND FILE
+    # -------------------------
+
+    if (
+        query.startswith("find ")
+        or query.startswith("search for a file")
+        or query.startswith("find a file")
+    ):
+
+        filename = query
+
+        for phrase in [
+            "search for a file",
+            "find a file",
+            "find",
+        ]:
+            filename = filename.replace(
+                phrase,
+                "",
+                1
+            )
+
+        filename = filename.strip()
+
+        if not filename:
+            speak("What file should I look for?")
+            return False
+
+        matches = find_file(filename)
+
+        if not matches:
+            speak(f"I couldn't find a file matching {filename}.")
+            return False
+
+        if len(matches) == 1:
+            speak(f"I found {matches[0].name}.")
+            print(matches[0])
+            return False
+
+        speak(
+            f"I found {len(matches)} files matching {filename}."
+        )
+
+        for match in matches[:10]:
+            print(match)
+
+        return False
 
     # -------------------------
     # APPLICATIONS

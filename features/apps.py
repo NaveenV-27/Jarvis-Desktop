@@ -22,9 +22,9 @@ def open_application(app: str) -> bool:
     if executable is None:
         return False
 
-    speak(f"Opening {app}")
+    speak(f"Opening {app}.")
 
-    os.system(f"start {executable}")
+    os.startfile(executable)
 
     return True
 

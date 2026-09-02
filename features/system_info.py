@@ -5,55 +5,40 @@ import psutil
 from core.speech import speak
 
 
-def get_cpu_usage() -> float:
-    return psutil.cpu_percent(interval=1)
+def system_status() -> None:
+    """Report current CPU, RAM, and battery usage."""
 
+    cpu = psutil.cpu_percent(interval=1)
+    memory = psutil.virtual_memory().percent
 
-def get_memory_usage() -> float:
-    return psutil.virtual_memory().percent
-
-
-def get_battery_status() -> str:
     battery = psutil.sensors_battery()
 
-    if battery is None:
-        return "Battery information is unavailable."
-
-    percentage = round(battery.percent)
-
-    if battery.power_plugged:
-        return f"Battery is at {percentage} percent and charging."
-
-    return f"Battery is at {percentage} percent."
-
-
-def system_status() -> None:
-    """Reports basic system status."""
-
-    cpu = get_cpu_usage()
-    memory = get_memory_usage()
-    battery = get_battery_status()
-
     message = (
-        f"CPU usage is {cpu} percent. "
-        f"Memory usage is {memory} percent. "
-        f"{battery}"
+        f"CPU usage is {cpu:.0f} percent. "
+        f"Memory usage is {memory:.0f} percent."
     )
+
+    if battery:
+        message += (
+            f" Battery is at "
+            f"{battery.percent:.0f} percent."
+        )
+
+        if battery.power_plugged:
+            message += " The computer is charging."
 
     print(message)
     speak(message)
 
 
 def computer_info() -> None:
-    """Reports basic computer information."""
-
-    system = platform.system()
-    release = platform.release()
-    machine = platform.machine()
+    """Report basic operating system information."""
 
     message = (
-        f"You are running {system} {release} "
-        f"on a {machine} machine."
+        f"You are running "
+        f"{platform.system()} "
+        f"{platform.release()} "
+        f"on a {platform.machine()} machine."
     )
 
     print(message)
